@@ -1,37 +1,72 @@
-function convertNumber(number, sourceBase, targetBase) {
-  const digits = "0123456789ABCDEF";
+//  Pole jmen
+const firstNames = [
+  "Jan","Petr","Pavel","Tomáš","Jiří",
+  "Martin","Josef","David","Jakub","Karel",
+  "Michal","Lukáš","Jaroslav","Václav","Roman",
+  "Filip","Ondřej","Radek","Marek","Daniel",
+  "Lucie","Eva","Marie","Tereza","Kateřina",
+  "Hana","Jana","Petra","Barbora","Karolína",
+  "Veronika","Kristýna","Monika","Markéta","Lenka",
+  "Alena","Nikola","Eliška","Adéla","Natálie",
+  "Zuzana","Klára","Andrea","Simona","Gabriela",
+  "Aneta","Šárka","Helena","Ivana","Dagmar"
+];
 
-  let decimal = 0;
-  let power = 1; 
-  number = number.toUpperCase();
+//  Pole  příjmení
 
-  for (let i = number.length - 1; i >= 0; i--) {
-    const digitValue = digits.indexOf(number[i]);
-    if (digitValue === -1 || digitValue >= sourceBase) {
-      return "Neplatné číslo pro tuto soustavu!";
-    }
-    decimal += digitValue * power;
-    power *= sourceBase;
-  }
+const surnames = [
+  "Novák","Svoboda","Novotný","Dvořák","Černý",
+  "Procházka","Kučera","Veselý","Horák","Němec",
+  "Marek","Pospíšil","Pokorný","Hájek","Král",
+ 
+  "Benešová","Fialová","Sedláčková","Urbanová","Kolářová",
+  "Šimková","Marková","Vlková","Konečná","Malá"
+];
 
-
-  if (decimal === 0) return "0";
-
-  let result = "";
-  while (decimal > 0) {
-    const remainder = decimal % targetBase;
-    result = digits[remainder] + result;
-    decimal = Math.floor(decimal / targetBase);
-  }
-
-  return result;
+//  Funkce pro náhodný výběr položky z pole
+function randomFromArray(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
-document.getElementById("convertBtn").addEventListener("click", function() {
-  const number = document.getElementById("number").value.trim();
-  const sourceBase = parseInt(document.getElementById("sourceBase").value);
-  const targetBase = parseInt(document.getElementById("targetBase").value);
+//  Generování náhodného data narození
+//  podle věkového rozmezí (minAge – maxAge)
+function randomBirthdate(minAge, maxAge) {
+  const now = new Date();
 
-  const result = convertNumber(number, sourceBase, targetBase);
-  document.getElementById("result").textContent = result;
-});
+  const minYear = now.getFullYear() - maxAge;
+  const maxYear = now.getFullYear() - minAge;
+
+  const year = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
+  const month = Math.floor(Math.random() * 12);
+  const day = Math.floor(Math.random() * 28) + 1;
+
+  const date = new Date(year, month, day);
+  return date.toISOString();
+}
+
+//  Hlavní funkce – generuje seznam zaměstnanců
+function main(input) {
+  const employees = [];
+
+  for (let i = 0; i < input.count; i++) {
+
+    // Náhodné pohlaví
+    const gender = Math.random() < 0.5 ? "male" : "female";
+
+    // Vytvoření jednoho zaměstnance
+    const employee = {
+      name: randomFromArray(firstNames),
+      surname: randomFromArray(surnames),
+      gender: gender,
+      birthdate: randomBirthdate(input.minAge, input.maxAge),
+      workload: randomFromArray([10, 20, 30, 40])
+    };
+
+    employees.push(employee);
+  }
+
+  return { employees };
+}
+
+//  Ukázka spuštění:
+// console.log(main({ count: 5, minAge: 18, maxAge: 60 }));
